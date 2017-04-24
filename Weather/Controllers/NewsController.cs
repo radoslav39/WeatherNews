@@ -1,32 +1,65 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Weather.Models;
+using Weather.ViewModels;
 
 namespace Weather.Controllers
 {
     public class NewsController : Controller
     {
+        private readonly int newsPerPage = 5;
         // GET: News
         [HttpGet]
-        public ActionResult Index()
-        {
-
-            return View();
-        }
-
-        [HttpGet]
-        public ActionResult Details(int newsId)
+        public ActionResult Index(int page = 0)
         {
             using (var context = ApplicationDbContext.Create())
             {
-                var news = context.News.SingleOrDefault(x => x.Id == newsId);
+                var news = context.News
+                    .OrderByDescending(x => x.Date)
+                    .Skip(page * newsPerPage)
+                    .Take(newsPerPage)
+                    .ToList();
+                
+                var newsCount = context.News.Count();
+                var userIds = news.Select(x => x.AuthorId).ToList();
+                var users = context.Users.Where(u => userIds.Contains(u.Id)).ToDictionary(x => x.Id, x => x);
+
+                var newsModels = news.Select(x => new NewsModel()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Content = x.Content.Length > 100 ? x.Content.Substring(0, 100) + "..." : x.Content,
+                    Date = x.Date,
+                    AuthorName = users[x.AuthorId].UserName
+                }).ToList();
+
+                var model = new NewsIndexModel()
+                {
+                    CurrentPage = page,
+                    News = newsModels,
+                    NewsPerPage = newsPerPage,
+                    NewsTotalCount = newsCount
+                };
+
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Details(int id)
+        {
+            using (var context = ApplicationDbContext.Create())
+            {
+                var news = context.News.SingleOrDefault(x => x.Id == id);
 
                 if (news == null)
                 {
-                    throw new ArgumentException($"News Id: {newsId} does not exist");
+                    throw new ArgumentException($"News Id: {id} does not exist");
                 }
 
                 var user = context.Users.SingleOrDefault(x => x.Id == news.AuthorId);
@@ -38,6 +71,7 @@ namespace Weather.Controllers
 
                 var newsModel = new NewsModel()
                 {
+                    Id = news.Id,
                     Title = news.Title,
                     Content = news.Content,
                     Date = news.Date,
@@ -49,6 +83,31 @@ namespace Weather.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        public ActionResult Create(CreateNewsModel model)
+        {
+            var user = System.Web.HttpContext.Current.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>()
+                .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+
+            var news = new News()
+            {
+                Title = model.Title,
+                Content = model.Content,
+                Date = DateTime.UtcNow,
+                AuthorId = user.Id
+            };
+
+            using (var context = ApplicationDbContext.Create())
+            {
+                context.News.Add(news);
+                context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
         [Authorize]
         public ActionResult Create()
         {

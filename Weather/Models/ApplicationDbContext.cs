@@ -12,7 +12,7 @@ namespace Weather.Models
         public DbSet<News> News { get; set; }
 
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("WeatherApp", throwIfV1Schema: false)
         {
         }
 
