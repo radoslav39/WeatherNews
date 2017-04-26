@@ -114,18 +114,88 @@ namespace Weather.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
-        public ActionResult Update()
+        public ActionResult Update(int id)
         {
-            return View();
+            using (var context = ApplicationDbContext.Create())
+            {
+                var news = context.News.SingleOrDefault(x => x.Id == id);
+
+                if (news == null)
+                {
+                    throw new ArgumentException($"News Id: {id} does not exist");
+                }
+
+                var newsModel = new UpdateNewsModel()
+                {
+                    Id = news.Id,
+                    Title = news.Title,
+                    Content = news.Content
+                };
+
+                return View(newsModel);
+            }
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult Delete()
+        public ActionResult Update(UpdateNewsModel model)
         {
-            return View();
+            var currentUser = System.Web.HttpContext.Current.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>()
+                .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+
+            using (var context = ApplicationDbContext.Create())
+            {
+                var news = context.News.SingleOrDefault(x => x.Id == model.Id);
+
+                if (news == null)
+                {
+                    throw new ArgumentException($"News Id: {model.Id} does not exist");
+                }
+
+                if (currentUser.Id != news.AuthorId)
+                {
+                    throw new ArgumentException($"Permission denied. Current user {currentUser.Id} is not the news author.");
+                }
+
+                news.Title = model.Title;
+                news.Content = model.Content;
+
+                context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult Delete(int id)
+        {
+            var currentUser = System.Web.HttpContext.Current.GetOwinContext()
+                           .GetUserManager<ApplicationUserManager>()
+                           .FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+
+            using (var context = ApplicationDbContext.Create())
+            {
+                var news = context.News.SingleOrDefault(x => x.Id == id);
+
+                if (news == null)
+                {
+                    throw new ArgumentException($"News Id: {id} does not exist");
+                }
+
+                if (currentUser.Id != news.AuthorId)
+                {
+                    throw new ArgumentException($"Permission denied. Current user {currentUser.Id} is not the news author.");
+                }
+
+                context.News.Remove(news);
+                context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
         }
     }
 }

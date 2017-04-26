@@ -212,6 +212,7 @@
     <Compile Include="ViewModels\NewsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\UpdateNewsModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -274,6 +275,7 @@
     <Content Include="Views\News\Details.cshtml" />
     <Content Include="Views\News\Create.cshtml" />
     <Content Include="Views\News\Index.cshtml" />
+    <Content Include="Views\News\Update.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

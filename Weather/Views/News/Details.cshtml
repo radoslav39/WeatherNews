@@ -1,12 +1,31 @@
 ﻿@model Weather.ViewModels.NewsModel
+@using System.Globalization
+
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-<div>@Model.Title</div>
-<div>@Model.Content</div>
-<div>@Model.Date</div>
-<div>@Model.AuthorName</div>
+<h2>@Model.Title</h2>
+<br />
+<div style="font-size:10px; font-style:italic;">
+    @Model.Date.ToString("d/M/yyyy, HH:mm", CultureInfo.InvariantCulture)
+    <br />
+    @Model.AuthorName
+</div>
+<br />
+<br />
+<div style="font-size:15px;">
+    @Model.Content
+</div>
+<footer class="pull-right">
+    @if (this.User.Identity.IsAuthenticated)
+    {
+        @Html.ActionLink("Update", "Update", "News", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
+        @Html.ActionLink("Delete", "Delete", "News", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })
+    }
+    @Html.ActionLink("Back", "Index", "News", null, new { @class = "btn btn-default btn-xs" })
+</footer>
+
+
 
 
