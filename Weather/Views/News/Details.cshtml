@@ -18,7 +18,7 @@
     @Model.Content
 </div>
 <footer class="pull-right">
-    @if (this.User.Identity.IsAuthenticated)
+    @if (this.User.Identity.IsAuthenticated || this.User.IsInRole("Admin"))
     {
         @Html.ActionLink("Update", "Update", "News", new { @id = Model.Id }, new { @class = "btn btn-success btn-xs" })
         @Html.ActionLink("Delete", "Delete", "News", new { @id = Model.Id }, new { @class = "btn btn-danger btn-xs" })

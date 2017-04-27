@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Weather.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Weather.Controllers
 {
@@ -155,7 +156,21 @@ namespace Weather.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    using (var context = ApplicationDbContext.Create())
+                    {
+                        var userCount = context.Users.Count();
+
+                        if (userCount == 1)
+                        {
+                            var roleStore = new RoleStore<IdentityRole>(context);
+                            var roleManager = new RoleManager<IdentityRole>(roleStore);
+
+                            await roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
+                            await UserManager.AddToRoleAsync(user.Id, "Admin");
+                        }
+                    }
+
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
