@@ -18,9 +18,6 @@
             <p>@news.Content</p>
         </div>
     }
-
-    @if (Model.NewsTotalCount != 0)
-    {
     <div>
         <a href="/News/Index?page=0">&lt;&lt;</a>
         &nbsp;
@@ -28,6 +25,7 @@
         &nbsp;
         @{
             var list = new List<int>();
+
             for (var i = Model.CurrentPage - 2; i <= Model.CurrentPage + 2; i++)
             {
                 if (i >= 0 && i <= pageCount - 1)
@@ -72,5 +70,4 @@
         &nbsp;
         <a href="/News/Index?page=@(pageCount - 1)">&gt;&gt;</a>
     </div>
-    }
 </div>

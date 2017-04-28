@@ -3,7 +3,6 @@ using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Weather.Models;
@@ -156,9 +155,9 @@ namespace Weather.Controllers
                     throw new ArgumentException($"News Id: {model.Id} does not exist");
                 }
 
-                if (currentUser.Id != news.AuthorId && !System.Web.HttpContext.Current.User.IsInRole("Admin"))
+                if (currentUser.Id != news.AuthorId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new ArgumentException($"Permission denied. Current user {currentUser.Id} is not the news author.");
                 }
 
                 news.Title = model.Title;
@@ -187,9 +186,9 @@ namespace Weather.Controllers
                     throw new ArgumentException($"News Id: {id} does not exist");
                 }
 
-                if (currentUser.Id != news.AuthorId && !System.Web.HttpContext.Current.User.IsInRole("Admin"))
+                if (currentUser.Id != news.AuthorId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new ArgumentException($"Permission denied. Current user {currentUser.Id} is not the news author.");
                 }
 
                 context.News.Remove(news);
