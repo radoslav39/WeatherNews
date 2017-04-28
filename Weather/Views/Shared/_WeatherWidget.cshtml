@@ -1,9 +1,11 @@
-﻿<div id='openweathermap-widget'></div>
+﻿@model Weather.ViewModels.WeatherWidgetModel
+
+<div id='openweathermap-widget'></div>
 <script type='text/javascript'>
     window.myWidgetParam = {
         id: 15,
-        cityid: 2022572,
-        appid: '',
+        cityid: @Model.CityId,
+        appid: '8800b1e8e1147570adcba94afe7b3f67',
         units: 'metric',
         containerid: 'openweathermap-widget',
     };

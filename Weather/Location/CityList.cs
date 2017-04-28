@@ -46,7 +46,7 @@ namespace Weather.Location
         {
             if (cities == null)
             {
-                Create();
+                cities = Create();
             }
 
             return cities;

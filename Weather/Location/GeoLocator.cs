@@ -14,7 +14,7 @@ namespace Weather.Location
         
         public async Task<GeoLocation> Locate(string ip)
         {
-            var response = await client.GetAsync($"https://freegeoip.net/json/{ip}");
+            var response = await client.GetAsync($"http://freegeoip.net/json/{ip}");
             var content = await response.Content.ReadAsStringAsync();
 
             var prototype = new
