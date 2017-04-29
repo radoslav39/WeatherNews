@@ -34,11 +34,15 @@ namespace Weather.Controllers
             var geoLocation = await geoLocator.Locate(requestAddress);
             var cities = cityList.GetCities();
             var city = cities.SingleOrDefault(x => x.Name.Equals(geoLocation.City, StringComparison.OrdinalIgnoreCase)
-                && x.Country.Equals(geoLocation.CountryCode, StringComparison.OrdinalIgnoreCase));
+                && x.Country.Equals(geoLocation.CountryCode, StringComparison.OrdinalIgnoreCase)
+                || (x.Coord != null && Math.Abs(x.Coord.Latitude - geoLocation.Latitude) < 0.01 && Math.Abs(x.Coord.Longitude - geoLocation.Longitude) < 0.01));
+
+            if (city == null)
+            {
+                return HttpNotFound();
+            }
 
             return PartialView("_WeatherWidget", new WeatherWidgetModel { CityId = city.Id });
         }
-
-       
     }
 }
