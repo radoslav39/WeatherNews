@@ -285,10 +285,10 @@
     <Content Include="Views\News\Index.cshtml" />
     <Content Include="Views\News\Update.cshtml" />
     <Content Include="Views\Shared\_WeatherWidget.cshtml" />
+    <Content Include="Views\Styles\Styles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Weather\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

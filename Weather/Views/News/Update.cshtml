@@ -4,15 +4,6 @@
     ViewBag.Title = "Update";
 }
 
-<style>
-    .caption {
-        width: 70px;
-    }
-
-    .textbox {
-        width: 800px;
-    }
-</style>
 <div>
     <form action="/News/Update" method="post">
         <input type="hidden" value="@Model.Id.ToString()" name="id" />
