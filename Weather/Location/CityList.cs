@@ -12,7 +12,8 @@ namespace Weather.Location
 
         private List<City> Create()
         {
-            var prototype = new[] {
+            var prototype = new[]
+            {
                 new
                 {
                     id = 0,
@@ -32,7 +33,7 @@ namespace Weather.Location
                 Id = x.id,
                 Name = x.name,
                 Country = x.country,
-                Coord = new Location.Coord
+                Coord = new Coord
                 {
                     Latitude = x.coord.lat,
                     Longitude = x.coord.lon

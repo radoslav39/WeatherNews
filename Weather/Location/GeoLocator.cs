@@ -8,7 +8,7 @@ using System.Web;
 
 namespace Weather.Location
 {
-    public class GeoLocator : IDisposable
+    public class GeoLocator
     {
         private static HttpClient client = new HttpClient();
         
@@ -37,15 +37,6 @@ namespace Weather.Location
             };
 
             return geoLocation;
-        }
-
-        public void Dispose()
-        {
-            if (client != null)
-            {
-                client.Dispose();
-                client = null;
-            }
         }
     }
 }
